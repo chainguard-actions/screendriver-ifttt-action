@@ -1,0 +1,14 @@
+{
+  "status": "unbundlable",
+  "entries": [
+    {
+      "path": "target/src/index.js",
+      "status": "unbundlable",
+      "reason": "indirect-require: Indirect calls to \"require\" will not be bundled",
+      "warnings": [
+        "indirect-require: Indirect calls to \"require\" will not be bundled",
+        "unsupported-require-call: This call to \"require\" will not be bundled because the argument is not a string literal"
+      ]
+    }
+  ]
+}

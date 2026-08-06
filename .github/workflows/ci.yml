@@ -1,0 +1,27 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
+        with:
+          node-version: '12.x'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Check source code
+        run: |
+          yarn lint
+          yarn prettier:check
+          yarn copy:paste:detector
+      - name: Compile source code
+        run: yarn compile
+      - name: Run tests
+        run: yarn test:unit:coverage
