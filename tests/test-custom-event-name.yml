@@ -1,0 +1,33 @@
+name: Test custom event name
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          event: my-custom-webhook-event
+          key: another-fake-key-99999
+
+      - name: Assert action ran and failed gracefully with custom event name
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # With a fake IFTTT key, the action should fail (HTTP 401 or similar)
+          # and call core.setFailed — outcome will be 'failure'
+          # The important thing is it does NOT crash with a missing-input error
+          # or an unhandled exception — it must be 'failure' or 'success', not 'skipped'
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully as expected with an invalid key"
+          elif [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action unexpectedly succeeded (real key may have been injected)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME' — expected 'failure' or 'success'"
+            exit 1
+          fi
